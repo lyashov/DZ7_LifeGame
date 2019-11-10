@@ -1,20 +1,19 @@
 package com.life;
-import java.io.*;
-import java.util.concurrent.*;
 
-class Game {
+import java.util.concurrent.TimeUnit;
+
+class GameInThreads {
         private static int[][] initPlace(){
            int [][] place = {
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
-                    {0, 1, 0, 1, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 1, 1, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 1, 0, 0, 0, 0, 0},
+                    {0, 1, 0, 1, 0, 0, 0, 0, 0},
+                    {0, 0, 1, 1, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0}};
            return place;
         }
 
@@ -57,54 +56,10 @@ class Game {
             System.out.println();
         }
 
-        private static int[][] initPlaceFromFile(String inFile, int sizeOfPlace) throws IOException {
-            FileReader file= new FileReader(inFile);
-            BufferedReader br = new BufferedReader(file);
-            String line;
-            int mas[][] = new int[sizeOfPlace][sizeOfPlace];
-            int i = 0;
-            while ((line = br.readLine()) != null){
-                String[] str = line.split(" ");
-                for (int j = 0; j < 10; j++) {
-                    mas[i][j] = Integer.parseInt(str[j]);
-                }
-                i++;
-            }
-            return mas;
-        }
+        public static void main(String[] args) throws InterruptedException {
+            int lifeIteration = 100;
+            int[][] place = initPlace();
 
-        private static void saveGameResultToFile(String outFile, int[][] place) throws IOException {
-            FileWriter file = new FileWriter(outFile);
-            BufferedWriter bw = new BufferedWriter(file);
-            for (int[] line : place) {
-                for (int el : line) {
-                    bw.write(el + " ");
-                }
-                bw.write('\n');
-            }
-            bw.close();
-            file.close();
-        }
-
-        public static void main(String[] args) throws InterruptedException, IOException {
-            String inFile;
-            String outFile;
-            int lifeIteration;
-            int sizeOfPlace  = 10;
-            int[][] place;
-
-            if (args.length >= 3) {
-                inFile = args[0];
-                outFile = args[1];
-                lifeIteration = Integer.parseInt(args[2]);
-                place = initPlaceFromFile(inFile, sizeOfPlace);
-            }
-            else{
-                inFile = args[0];
-                outFile =  System.getProperty("user.dir").concat("/out.txt");
-                lifeIteration = 100;
-                place = initPlace();
-            }
             int[][] board = new int[place.length][place[0].length];
             clearScreen();
 
@@ -129,7 +84,6 @@ class Game {
                     }
                 }
             }
-            saveGameResultToFile(outFile, place);
         }
     }
 
