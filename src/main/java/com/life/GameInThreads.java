@@ -123,7 +123,7 @@ class GameInThreads {
                 place = initPlaceFromFile(inFile, sizeOfPlace);
             }
             else{
-                inFile = args[0];
+                inFile =  System.getProperty("user.dir").concat("/in.txt");
                 outFile =  System.getProperty("user.dir").concat("/out.txt");
                 lifeIteration = 100;
                 place = initPlace();
