@@ -87,6 +87,7 @@ class Game {
         }
 
         public static void main(String[] args) throws InterruptedException, IOException {
+            long startTime = System.currentTimeMillis();
             String inFile;
             String outFile;
             int lifeIteration;
@@ -128,9 +129,13 @@ class Game {
                         }
                     }
                 }
+
             }
             saveGameResultToFile(outFile, place);
+            long stopTime = System.currentTimeMillis();
+            System.out.println(stopTime - startTime);
         }
+
     }
 
 
