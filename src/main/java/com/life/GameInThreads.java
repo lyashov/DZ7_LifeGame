@@ -1,6 +1,7 @@
 package com.life;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
@@ -24,25 +25,29 @@ class GameInThreads {
             System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         }
 
-        static int getCountNeightborn(int [][]place, int x, int y){
-            Neightborn[] near = new Neightborn[8];
-            near[0] = new Neightborn(x - 1, y - 1);
-            near[1] = new Neightborn(x - 1, y );
-            near[2] = new Neightborn(x - 1, y + 1);
-            near[3] = new Neightborn(x , y - 1);
-            near[4] = new Neightborn(x , y + 1);
-            near[5] = new Neightborn(x + 1, y - 1);
-            near[6] = new Neightborn(x + 1, y );
-            near[7] = new Neightborn(x + 1, y + 1);
-            int count = 0;
-            for (Neightborn neightborn: near) {
-                try {
-                    if (place[neightborn.getX()][neightborn.getY()] == 1) count++;
-                }
-                catch (ArrayIndexOutOfBoundsException e) {}
+    private static int lockLife(int coord, int sizeOfLife){
+        return (coord >= 0) ? coord : sizeOfLife - 1;
+    }
+    static int getCountNeightborn(int [][]place, int x, int y){
+        int sizeOfLife = place.length + 1;
+        Neightborn[] near = new Neightborn[8];
+        near[0] = new Neightborn(lockLife(x - 1, sizeOfLife-1), lockLife(y - 1, sizeOfLife-1));
+        near[1] = new Neightborn(lockLife(x - 1,sizeOfLife-1), lockLife(y, sizeOfLife-1) );
+        near[2] = new Neightborn(lockLife(x - 1, sizeOfLife-1), lockLife(y + 1, sizeOfLife-1));
+        near[3] = new Neightborn(lockLife(x, sizeOfLife-1) , lockLife(y - 1, sizeOfLife-1));
+        near[4] = new Neightborn(lockLife(x, sizeOfLife-1) , lockLife(y + 1, sizeOfLife-1));
+        near[5] = new Neightborn(lockLife(x + 1, sizeOfLife-1), lockLife(y - 1, sizeOfLife-1));
+        near[6] = new Neightborn(lockLife(x + 1, sizeOfLife-1), lockLife(y ,sizeOfLife-1));
+        near[7] = new Neightborn(lockLife(x + 1, sizeOfLife-1), lockLife(y + 1, sizeOfLife-1));
+        int count = 0;
+        for (Neightborn neightborn: near) {
+            try {
+                if (place[neightborn.getX()][neightborn.getY()] == 1) count++;
             }
-            return count;
+            catch (ArrayIndexOutOfBoundsException e) {}
         }
+        return count;
+    }
 
         static void printState(int[][] place) {
             for (int[] i: place) {
@@ -141,13 +146,16 @@ class GameInThreads {
                 TimeUnit.MILLISECONDS.sleep(500);
                 clearScreen();
 
+                ArrayList<Thread> thArr = new ArrayList<>();
                 for (int i = 0; i < board.length; i++) {
                     for (int j = 0; j < board[i].length; j++) {
                         MyRunnable myRunnable = new MyRunnable(i, j, board, place);
                         Thread thread = new Thread(myRunnable);
                         thread.start();
-                        thread.join();
-
+                        thArr.add(thread);
+                    }
+                    for (Thread th:thArr) {
+                        th.join();
                     }
                 }
 
