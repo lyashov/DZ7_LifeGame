@@ -160,7 +160,6 @@ class GameInThreads {
             String outFile;
             int lifeIteration;
             int sizeOfPlace  = 10;
-            int[][] place;
             boolean isFile;
 
             if (args.length >= 3) {
@@ -177,7 +176,6 @@ class GameInThreads {
             }
 
             playGame(isFile, inFile,  outFile, sizeOfPlace, lifeIteration);
-
 
             long stopTime = System.currentTimeMillis();
             System.out.println(stopTime - startTime);

@@ -4,9 +4,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
-
-public class MainTest extends Main {
+public class MainTest {
     @Test
     public void test() throws IOException, InterruptedException {
         String inFile =  System.getProperty("user.dir").concat("/in.txt");
@@ -18,12 +16,12 @@ public class MainTest extends Main {
         long startTime = System.currentTimeMillis();
         Game.playGame(isFile, inFile,  outFile, sizeOfPlace, lifeIteration);
         long stopTime = System.currentTimeMillis();
-        System.out.println(stopTime - startTime);
 
-        startTime = System.currentTimeMillis();
+        long startTimeThreads = System.currentTimeMillis();
         GameInThreads.playGame(isFile, inFile,  outFile, sizeOfPlace, lifeIteration);
-        stopTime = System.currentTimeMillis();
-        System.out.println(stopTime - startTime);
+        long stopTimeThreads = System.currentTimeMillis();
+        System.out.println("Game in main-thread " + (stopTime - startTime));
+        System.out.println("Game with threads " + (stopTimeThreads - startTimeThreads));
     }
 
 }

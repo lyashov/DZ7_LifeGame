@@ -3,6 +3,10 @@ import java.io.*;
 import java.util.concurrent.*;
 
 class Game {
+    /**
+     * init a default state of place
+     * @return
+     */
     private static int[][] initPlace() {
         int[][] place = {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -18,14 +22,30 @@ class Game {
         return place;
     }
 
+    /**
+     * cls screen
+     */
     private static void clearScreen() {
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     }
 
+    /**
+     * if coordinate < 0 then coordinate is end of place
+     * @param coord
+     * @param sizeOfLife
+     * @return
+     */
     private static int lockLife(int coord, int sizeOfLife) {
         return (coord >= 0) ? coord : sizeOfLife - 1;
     }
 
+    /**
+     * Get count life's neighborns
+     * @param place
+     * @param x
+     * @param y
+     * @return
+     */
     static int getCountNeightborn(int[][] place, int x, int y) {
         int sizeOfLife = place.length + 1;
         Neightborn[] near = new Neightborn[8];
@@ -47,6 +67,10 @@ class Game {
         return count;
     }
 
+    /**
+     * print one circle of life
+     * @param place
+     */
     static void printState(int[][] place) {
         for (int[] i : place) {
             for (int j : i) {
@@ -61,6 +85,13 @@ class Game {
         System.out.println();
     }
 
+    /**
+     * read
+     * @param inFile
+     * @param sizeOfPlace
+     * @return
+     * @throws IOException
+     */
     private static int[][] initPlaceFromFile(String inFile, int sizeOfPlace) throws IOException {
         FileReader file = new FileReader(inFile);
         BufferedReader br = new BufferedReader(file);
@@ -77,6 +108,12 @@ class Game {
         return mas;
     }
 
+    /**
+     * save result to file
+     * @param outFile
+     * @param place
+     * @throws IOException
+     */
     private static void saveGameResultToFile(String outFile, int[][] place) throws IOException {
         FileWriter file = new FileWriter(outFile);
         BufferedWriter bw = new BufferedWriter(file);
@@ -90,6 +127,16 @@ class Game {
         file.close();
     }
 
+    /**
+     * play game without multi
+     * @param isFile
+     * @param inFile
+     * @param outFile
+     * @param sizeOfPlace
+     * @param lifeIteration
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public static void playGame(boolean isFile, String inFile, String outFile, int sizeOfPlace, int lifeIteration) throws IOException, InterruptedException {
         int[][] place;
 
@@ -132,7 +179,6 @@ class Game {
             String outFile;
             int lifeIteration;
             int sizeOfPlace  = 10;
-            int[][] place;
             boolean isFile;
 
             if (args.length >= 3) {
@@ -149,7 +195,6 @@ class Game {
             }
 
             playGame(isFile, inFile,  outFile, sizeOfPlace, lifeIteration);
-
 
             long stopTime = System.currentTimeMillis();
             System.out.println(stopTime - startTime);
