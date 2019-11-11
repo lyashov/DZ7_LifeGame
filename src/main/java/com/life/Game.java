@@ -36,7 +36,14 @@ class Game {
      * @return
      */
     private static int lockLife(int coord, int sizeOfLife) {
-        return (coord >= 0) ? coord : sizeOfLife - 1;
+        if (coord > sizeOfLife - 1) {
+            return 0;
+        }
+        if (coord < 0){
+            return sizeOfLife - 1;
+        }
+        return coord;
+
     }
 
     /**
