@@ -117,54 +117,68 @@ class GameInThreads {
         }
     }
 
-        public static void main(String[] args) throws InterruptedException, IOException {
+    public static void playGame( boolean isFile, String inFile,  String outFile, int sizeOfPlace, int lifeIteration) throws IOException, InterruptedException {
+        int[][] place;
+
+        if (isFile) place = initPlaceFromFile(inFile, sizeOfPlace);
+        else place = initPlace();
+
+        int[][] board = new int[place.length][place[0].length];
+        clearScreen();
+
+        for (int gen = 0; gen < lifeIteration; gen++) {
+            for (int i = 0; i < place.length; i++) {
+                for (int j = 0; j < place[i].length; j++) {
+                    board[i][j] = place[i][j];
+                }
+            }
+            printState(board);
+            TimeUnit.MILLISECONDS.sleep(500);
+            clearScreen();
+
+            int middleSize = sizeOfPlace / 2;
+            for (int i = 0; i < board.length; i++) {
+                MyRunnable myRunnable = new MyRunnable(i, 0, middleSize, board, place);
+                Thread thread = new Thread(myRunnable);
+                thread.start();
+
+                MyRunnable myRunnable1 = new MyRunnable(i, middleSize, board.length, board, place);
+                Thread thread1 = new Thread(myRunnable1);
+                thread1.start();
+
+                thread.join();
+                thread1.join();
+            }
+        }
+        saveGameResultToFile(outFile, place);
+    }
+
+    public static void main(String[] args) throws InterruptedException, IOException {
             long startTime = System.currentTimeMillis();
+
             String inFile;
             String outFile;
             int lifeIteration;
             int sizeOfPlace  = 10;
             int[][] place;
+            boolean isFile;
 
             if (args.length >= 3) {
                 inFile = args[0];
                 outFile = args[1];
                 lifeIteration = Integer.parseInt(args[2]);
-                place = initPlaceFromFile(inFile, sizeOfPlace);
+                isFile = true;
             }
             else{
                 inFile =  System.getProperty("user.dir").concat("/in.txt");
                 outFile =  System.getProperty("user.dir").concat("/out.txt");
-                lifeIteration = 100;
-                place = initPlace();
+                lifeIteration = 30;
+                isFile = false;
             }
-            int[][] board = new int[place.length][place[0].length];
-            clearScreen();
 
-            for (int gen = 0; gen < lifeIteration; gen++) {
-                for (int i = 0; i < place.length; i++) {
-                    for (int j = 0; j < place[i].length; j++) {
-                        board[i][j] = place[i][j];
-                    }
-                }
-                printState(board);
-                TimeUnit.MILLISECONDS.sleep(500);
-                clearScreen();
+            playGame(isFile, inFile,  outFile, sizeOfPlace, lifeIteration);
 
-                int middleSize = sizeOfPlace / 2;
-                for (int i = 0; i < board.length; i++) {
-                    MyRunnable myRunnable = new MyRunnable(i, 0, middleSize, board, place);
-                    Thread thread = new Thread(myRunnable);
-                    thread.start();
 
-                    MyRunnable myRunnable1 = new MyRunnable(i, middleSize, board.length, board, place);
-                    Thread thread1 = new Thread(myRunnable1);
-                    thread1.start();
-
-                    thread.join();
-                    thread1.join();
-                }
-            }
-            saveGameResultToFile(outFile, place);
             long stopTime = System.currentTimeMillis();
             System.out.println(stopTime - startTime);
         }
