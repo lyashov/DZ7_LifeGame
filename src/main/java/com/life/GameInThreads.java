@@ -94,21 +94,25 @@ class GameInThreads {
         }
 
     public static class MyRunnable implements Runnable {
-        int i, j;
+        int i, start, end;
         int[][] board, place;
-        public MyRunnable(int i, int j, int[][] board, int[][] place) {
+        public MyRunnable(int i, int start, int end, int[][] board, int[][] place) {
             this.i = i;
-            this.j = j;
             this.board = board;
             this.place = place;
+            this.start = start;
+            this.end = end;
 
         }
 
         public void run() {
-            if (board[i][j] == 1 && !(getCountNeightborn(board, i, j) == 2 || getCountNeightborn(board, i, j) == 3)) {
-                place[i][j] = 0;
-            } else if (board[i][j] == 0 && getCountNeightborn(board, i, j) == 3) {
-                place[i][j] = 1;
+            for (int j = start; j < end; j++) {
+                if (board[i][j] == 1 && !(getCountNeightborn(board, i, j) == 2 || getCountNeightborn(board, i, j) == 3)) {
+                    place[i][j] = 0;
+                }
+                else if    (board[i][j] == 0 && getCountNeightborn(board, i, j) == 3) {
+                    place[i][j] = 1;
+                }
             }
         }
     }
@@ -146,19 +150,19 @@ class GameInThreads {
                 TimeUnit.MILLISECONDS.sleep(500);
                 clearScreen();
 
-                ArrayList<Thread> thArr = new ArrayList<>();
+                int middleSize = sizeOfPlace / 2;
                 for (int i = 0; i < board.length; i++) {
-                    for (int j = 0; j < board[i].length; j++) {
-                        MyRunnable myRunnable = new MyRunnable(i, j, board, place);
-                        Thread thread = new Thread(myRunnable);
-                        thread.start();
-                        thArr.add(thread);
-                    }
-                    for (Thread th:thArr) {
-                        th.join();
-                    }
-                }
+                    MyRunnable myRunnable = new MyRunnable(i, 0, middleSize, board, place);
+                    Thread thread = new Thread(myRunnable);
+                    thread.start();
 
+                    MyRunnable myRunnable1 = new MyRunnable(i, middleSize, board.length, board, place);
+                    Thread thread1 = new Thread(myRunnable1);
+                    thread1.start();
+
+                    thread.join();
+                    thread1.join();
+                }
             }
             saveGameResultToFile(outFile, place);
             long stopTime = System.currentTimeMillis();
