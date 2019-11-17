@@ -2,7 +2,9 @@ package com.life;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 class GameInThreads {
@@ -139,22 +141,27 @@ class GameInThreads {
                 }
             }
             printState(board);
-            TimeUnit.MILLISECONDS.sleep(500);
+            TimeUnit.MILLISECONDS.sleep(100);
             clearScreen();
 
             int middleSize = sizeOfPlace / 2;
+
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+
             for (int i = 0; i < board.length; i++) {
                 MyRunnable myRunnable = new MyRunnable(i, 0, middleSize, board, place);
                 Thread thread = new Thread(myRunnable);
-                thread.start();
+                //thread.start();
+                executor.execute(thread);
 
                 MyRunnable myRunnable1 = new MyRunnable(i, middleSize, board.length, board, place);
                 Thread thread1 = new Thread(myRunnable1);
-                thread1.start();
-
-                thread.join();
-                thread1.join();
+                //thread1.start();
+                executor.execute(thread1);
+                //thread.join();
+                //thread1.join();
             }
+            executor.shutdown();
         }
         saveGameResultToFile(outFile, place);
     }
